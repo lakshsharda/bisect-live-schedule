@@ -1,0 +1,28 @@
+name: CI
+
+# Runs on GitHub-hosted runners. It does not call any other service.
+# Flaky check inside the job: if tests fail, only the failed tests are re-run (pytest --last-failed).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Set up environment
+        run: uv sync --frozen
+      - name: Run tests
+        run: |
+          set +e
+          uv run pytest -v; first=$?
+          if [ $first -eq 0 ]; then exit 0; fi
+          if [ $first -ne 1 ]; then exit $first; fi  # not test failures
+          echo "::group::Flaky check: re-running only the failed tests"
+          uv run pytest -v --last-failed; second=$?
+          echo "::endgroup::"
+          if [ $second -eq 0 ]; then echo "::warning::Flaky tests: they failed once and passed when re-run."; exit 0; fi
+          exit 1

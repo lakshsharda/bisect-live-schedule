@@ -1,0 +1,12 @@
+[project]
+name = "shiftkit"
+version = "0.1.0"
+description = "Small shift-scheduling and booking library (times in minutes) used as a live demo target for AI Git-Bisect."
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
