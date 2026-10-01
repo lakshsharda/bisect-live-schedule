@@ -1,6 +1,6 @@
 import pytest
 
-from shiftkit.slots import Slot, clock, hhmm, overlaps
+from shiftkit.slots import Slot, clock, gap_minutes, hhmm, merge, overlaps
 
 
 def test_hhmm_parses_times():
@@ -37,3 +37,20 @@ def test_overlapping_slots():
 def test_adjacent_and_separate_slots_do_not_overlap():
     assert not overlaps(Slot(540, 600), Slot(600, 660))
     assert not overlaps(Slot(540, 600), Slot(700, 760))
+
+
+def test_gap_between_slots():
+    assert gap_minutes(Slot(540, 600), Slot(615, 660)) == 15
+
+
+def test_gap_is_negative_when_slots_overlap():
+    assert gap_minutes(Slot(540, 600), Slot(570, 660)) == -30
+
+
+def test_merge_combines_overlapping_and_touching_slots():
+    merged = merge([Slot(600, 660), Slot(540, 610), Slot(660, 700), Slot(800, 820)])
+    assert merged == [Slot(540, 700), Slot(800, 820)]
+
+
+def test_merge_of_nothing():
+    assert merge([]) == []

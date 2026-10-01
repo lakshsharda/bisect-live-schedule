@@ -35,3 +35,19 @@ class Slot:
 
 def overlaps(a: Slot, b: Slot) -> bool:
     return a.start < b.end and b.start < a.end
+
+
+def gap_minutes(earlier: Slot, later: Slot) -> int:
+    """Minutes between the end of `earlier` and the start of `later` (negative if they overlap)."""
+    return later.start - earlier.end
+
+
+def merge(slots: list[Slot]) -> list[Slot]:
+    """Combine overlapping or touching slots into the smallest sorted list."""
+    merged: list[Slot] = []
+    for slot in sorted(slots, key=lambda s: s.start):
+        if merged and slot.start <= merged[-1].end:
+            merged[-1] = Slot(merged[-1].start, max(merged[-1].end, slot.end))
+        else:
+            merged.append(slot)
+    return merged
