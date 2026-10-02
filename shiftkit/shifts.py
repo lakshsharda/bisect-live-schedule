@@ -30,3 +30,14 @@ def shift_minutes(shift: Shift) -> int:
 def overtime_minutes(worked_minutes: int, threshold_minutes: int) -> int:
     """Minutes worked beyond the threashold."""
     return max(0, worked_minutes - threshold_minutes)
+
+
+def weekly_report(shifts: list[Shift]) -> dict[str, dict[str, int]]:
+    """Total and overtime minutes per employee for one week."""
+    totals: dict[str, int] = {}
+    for shift in shifts:
+        totals[shift.employee] = totals.get(shift.employee, 0) + shift_minutes(shift)
+    return {
+        employee: {"minutes": minutes, "overtime": overtime_minutes(minutes, WEEKLY_THRESHOLD_MINUTES)}
+        for employee, minutes in sorted(totals.items())
+    }
