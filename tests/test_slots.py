@@ -1,6 +1,6 @@
 import pytest
 
-from shiftkit.slots import Slot, clock, gap_minutes, hhmm, merge, overlaps
+from shiftkit.slots import Slot, clock, free_slots, gap_minutes, hhmm, merge, overlaps
 
 
 def test_hhmm_parses_times():
@@ -54,3 +54,14 @@ def test_merge_combines_overlapping_and_touching_slots():
 
 def test_merge_of_nothing():
     assert merge([]) == []
+
+
+def test_free_slots_around_bookings():
+    day = Slot(540, 1020)
+    assert free_slots(day, [Slot(600, 660), Slot(720, 780)]) == [Slot(540, 600), Slot(660, 720), Slot(780, 1020)]
+
+
+def test_free_slots_of_an_empty_day_and_a_full_day():
+    day = Slot(540, 1020)
+    assert free_slots(day, []) == [day]
+    assert free_slots(day, [Slot(500, 1100)]) == []

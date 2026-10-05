@@ -42,6 +42,20 @@ def gap_minutes(earlier: Slot, later: Slot) -> int:
     return later.start - earlier.end
 
 
+def free_slots(day: Slot, booked: list[Slot]) -> list[Slot]:
+    """The parts of `day` not covered by any booked slot."""
+    free, cursor = [], day.start
+    for slot in merge(booked):
+        if slot.end <= day.start or slot.start >= day.end:
+            continue
+        if slot.start > cursor:
+            free.append(Slot(cursor, slot.start))
+        cursor = max(cursor, slot.end)
+    if cursor < day.end:
+        free.append(Slot(cursor, day.end))
+    return free
+
+
 def merge(slots: list[Slot]) -> list[Slot]:
     """Combine overlapping or touching slots into the smallest sorted list."""
     merged: list[Slot] = []
