@@ -13,6 +13,11 @@ class Shift:
     start: int
     end: int
 
+    @property
+    def minutes(self) -> int:
+        end = self.end if self.end > self.start else self.end + 24 * 60  # overnight shifts
+        return end - self.start
+
 
 def make_shift(employee: str, day: int, start: str, end: str) -> Shift:
     return Shift(employee, day, hhmm(start), hhmm(end))
@@ -28,8 +33,7 @@ def is_night_shift(shift: Shift) -> bool:
 
 
 def shift_minutes(shift: Shift) -> int:
-    end = shift.end if shift.end > shift.start else shift.end + 24 * 60  # overnight shifts
-    return end - shift.start
+    return shift.minutes
 
 
 def overtime_minutes(worked_minutes: int, threshold_minutes: int) -> int:
@@ -41,7 +45,7 @@ def weekly_report(shifts: list[Shift]) -> dict[str, dict[str, int]]:
     """Total and overtime minutes per employee for one week."""
     totals: dict[str, int] = {}
     for shift in shifts:
-        totals[shift.employee] = totals.get(shift.employee, 0) + shift_minutes(shift)
+        totals[shift.employee] = totals.get(shift.employee, 0) + shift.minutes
     return {
         employee: {"minutes": minutes, "overtime": overtime_minutes(minutes, WEEKLY_THRESHOLD_MINUTES)}
         for employee, minutes in sorted(totals.items())
