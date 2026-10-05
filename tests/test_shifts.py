@@ -1,4 +1,4 @@
-from shiftkit.shifts import describe, make_shift, overtime_minutes, shift_minutes, weekly_report
+from shiftkit.shifts import describe, is_night_shift, make_shift, overtime_minutes, shift_minutes, weekly_report
 
 
 def test_make_shift_parses_times():
@@ -54,3 +54,9 @@ def test_weekly_report_includes_overnight_shifts():
 
 def test_weekly_report_of_nothing():
     assert weekly_report([]) == {}
+
+
+def test_night_shift_detection():
+    assert is_night_shift(make_shift("Ben", 4, "22:00", "06:00"))
+    assert is_night_shift(make_shift("Cy", 1, "23:00", "23:30"))
+    assert not is_night_shift(make_shift("Ana", 0, "09:00", "17:00"))

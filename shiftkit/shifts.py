@@ -22,6 +22,11 @@ def describe(shift: Shift) -> str:
     return f"{DAYS[shift.day]} {clock(shift.start)}-{clock(shift.end)} {shift.employee}"
 
 
+def is_night_shift(shift: Shift) -> bool:
+    """A shift that starts at 22:00 or later, ends by 06:00, or runs past midnight."""
+    return shift.start >= hhmm("22:00") or shift.end <= hhmm("06:00") or shift.end <= shift.start
+
+
 def shift_minutes(shift: Shift) -> int:
     end = shift.end if shift.end > shift.start else shift.end + 24 * 60  # overnight shifts
     return end - shift.start
