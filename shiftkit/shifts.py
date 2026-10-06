@@ -1,6 +1,7 @@
 """Shifts and overtime."""
-from .slots import clock, hhmm
 from dataclasses import dataclass
+
+from .slots import clock, hhmm
 
 WEEKLY_THRESHOLD_MINUTES = 40 * 60
 DAYS = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -37,7 +38,7 @@ def shift_minutes(shift: Shift) -> int:
 
 
 def overtime_minutes(worked_minutes: int, threshold_minutes: int) -> int:
-    """Minutes worked beyond the threashold."""
+    """Minutes worked beyond the threshold."""
     return max(0, worked_minutes - threshold_minutes)
 
 
@@ -47,6 +48,6 @@ def weekly_report(shifts: list[Shift]) -> dict[str, dict[str, int]]:
     for shift in shifts:
         totals[shift.employee] = totals.get(shift.employee, 0) + shift.minutes
     return {
-        employee: {"minutes": minutes, "overtime": overtime_minutes(minutes, WEEKLY_THRESHOLD_MINUTES)}
+        employee: {"minutes": minutes, "overtime": overtime_minutes(WEEKLY_THRESHOLD_MINUTES, minutes)}
         for employee, minutes in sorted(totals.items())
     }
