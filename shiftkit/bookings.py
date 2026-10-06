@@ -26,6 +26,10 @@ class BookingBook:
         self._slots.setdefault(resource, []).append(slot)
         self._slots[resource].sort(key=lambda s: s.start)
 
+    def cancel_all_for(self, resource: str) -> int:
+        """Remove every booking of a resource; returns how many were removed."""
+        return len(self._slots.pop(resource, []))
+
     def cancel(self, resource: str, slot: Slot) -> None:
         try:
             self._slots.get(resource, []).remove(slot)

@@ -60,3 +60,10 @@ def test_booking_exactly_one_buffer_away_is_allowed():
     book.book("room-1", Slot(540, 600))
     book.book("room-1", Slot(615, 660))
     assert len(book.slots_for("room-1")) == 2
+
+
+def test_cancel_all_for_a_resource():
+    book = BookingBook()
+    book.book("room-1", Slot(540, 600))
+    book.book("room-1", Slot(700, 760))
+    assert book.cancel_all_for("room-1") == 2 and book.slots_for("room-1") == []
